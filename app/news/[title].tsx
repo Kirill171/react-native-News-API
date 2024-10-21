@@ -21,7 +21,7 @@ export default function FilmsScreen() {
         title: author || 'News',
         headerRight: () => (
           <View style={styles.titleIcons}>
-            {/* <TitleFavorite filmId={author} /> */}
+            <TitleFavorite newsObj={{ author, content, description, publishedAt, title, url, urlToImage }} />
             <TitleLogout />
           </View>
         ),
@@ -68,9 +68,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   titleIcons: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
+    padding: 0,
   },
   boldText: {
     fontWeight: 'bold',

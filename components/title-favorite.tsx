@@ -1,5 +1,5 @@
 import { useAuth } from '@/app/auth/AuthProvider';
-import { TouchableOpacity, Image, Alert, ActivityIndicator, Modal, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Image, ActivityIndicator, Modal, View, Text, StyleSheet } from 'react-native';
 import { ImageSourcePropType } from 'react-native';
 import Parse from '@/config/parseConfig';
 import { useEffect, useState, useCallback } from 'react';
@@ -7,11 +7,22 @@ import { useEffect, useState, useCallback } from 'react';
 const favoriteIcon: ImageSourcePropType = require('@/assets/images/favorite.png');
 const favoriteActiveIcon: ImageSourcePropType = require('@/assets/images/favorite-active.png');
 
-interface TitleFavoriteProps {
-  filmId: number;
+interface NewsObjProps {
+  author: string;
+  content: string;
+  description: string;
+  publishedAt: string;
+  title: string;
+  url: string;
+  urlToImage: string;
 }
 
-export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
+interface TitleFavoriteProps {
+  newsObj: NewsObjProps;
+}
+
+export default function TitleFavorite({ newsObj }: TitleFavoriteProps) {
+  const { author, content, description, publishedAt, title, url, urlToImage } = newsObj;
   const { user } = useAuth();
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,7 +33,7 @@ export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
 
     const query = new Parse.Query("Favorites");
     query.equalTo("userId", user.id);
-    query.equalTo("filmId", filmId);
+    query.equalTo("title", title);
 
     try {
       const results = await query.find();
@@ -30,7 +41,7 @@ export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
     } catch (error) {
       console.error('Ошибка при проверке избранного:', error);
     }
-  }, [user, filmId]);
+  }, [user, title]);
 
   useEffect(() => {
     if (user) {
@@ -48,13 +59,19 @@ export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
 
     if (isAdding) {
       Favorite.set("userId", user.id);
-      Favorite.set("filmId", filmId);
+      Favorite.set("title", title);
+      Favorite.set("author", author);
+      Favorite.set("content", content);
+      Favorite.set("description", description);
+      Favorite.set("publishedAt", publishedAt);
+      Favorite.set("url", url);
+      Favorite.set("urlToImage", urlToImage);
       Favorite.set("status", selectedStatus);
 
       try {
         const existingQuery = new Parse.Query("Favorites");
         existingQuery.equalTo("userId", user.id);
-        existingQuery.equalTo("filmId", filmId);
+        existingQuery.equalTo("title", title);
         const existingResults = await existingQuery.find();
 
         if (existingResults.length === 0) {
@@ -67,7 +84,7 @@ export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
     } else {
       const query = new Parse.Query("Favorites");
       query.equalTo("userId", user.id);
-      query.equalTo("filmId", filmId);
+      query.equalTo("title", title);
 
       try {
         const results = await query.find();
@@ -118,18 +135,18 @@ export default function TitleFavorite({ filmId }: TitleFavoriteProps) {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Выберите статус</Text>
-            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('Посмотрено')}>
-              <Text style={styles.buttonText}>Посмотрено</Text>
+            <Text style={styles.modalTitle}>Select status</Text>
+            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('I read')}>
+              <Text style={styles.buttonText}>I read</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('Смотрю')}>
-              <Text style={styles.buttonText}>Смотрю</Text>
+            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('I am reading')}>
+              <Text style={styles.buttonText}>I am reading</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('Посмотрю')}>
-              <Text style={styles.buttonText}>Посмотрю</Text>
+            <TouchableOpacity style={styles.button} onPress={() => handleStatusSelect('I want to read')}>
+              <Text style={styles.buttonText}>I want to read</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButtonText}>Закрыть</Text>
+              <Text style={styles.closeButtonText}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
