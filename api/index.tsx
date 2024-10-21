@@ -8,6 +8,7 @@ export default async function getNews(keyword: string): Promise<Result | null> {
       params: {
         q: encodeURIComponent(keyword),
         language: 'en',
+        pageSize: 20,
       },
       headers: {
         'x-api-key': API_KEY,

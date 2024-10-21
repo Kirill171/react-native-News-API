@@ -1,5 +1,5 @@
-import { useLocalSearchParams, Stack, Link } from 'expo-router';
-import { ScrollView, View, Image, Text, StyleSheet } from 'react-native';
+import { useLocalSearchParams, Stack } from 'expo-router';
+import { ScrollView, View, Image, Text, StyleSheet, Linking } from 'react-native';
 
 import TitleFavorite from '@/components/title-favorite';
 import TitleLogout from '@/components/title-logout';
@@ -19,10 +19,12 @@ export default function FilmsScreen() {
     <View style={{ flex: 1 }}>
       <Stack.Screen options={{
         title: author || 'News',
-        headerRight: () => (<View style={styles.titleIcons}>
-          {/* <TitleFavorite filmId={author} /> */}
-          <TitleLogout />
-        </View>)
+        headerRight: () => (
+          <View style={styles.titleIcons}>
+            {/* <TitleFavorite filmId={author} /> */}
+            <TitleLogout />
+          </View>
+        ),
       }} />
       <ScrollView>
         <View style={styles.center}>
@@ -33,14 +35,11 @@ export default function FilmsScreen() {
         <Text style={styles.text}><Text style={styles.boldText}>Content:</Text> {content}</Text>
         <Text style={styles.text}><Text style={styles.boldText}>Description:</Text> {description}</Text>
         <Text style={styles.text}><Text style={styles.boldText}>Published at:</Text> {publishedAt}</Text>
-        <Text style={styles.text}>
-          <Link
-            href={url}
-            target='_blank'
-            style={styles.link}
-          >
-            Link
-          </Link>
+        <Text
+          style={styles.link}
+          onPress={() => Linking.openURL(url)}
+        >
+          more details...
         </Text>
       </ScrollView>
     </View>
@@ -69,7 +68,6 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   titleIcons: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
@@ -81,11 +79,11 @@ const styles = StyleSheet.create({
   text: {
     marginHorizontal: 10,
     marginBottom: 20,
-    alignSelf: 'flex-start',
     fontSize: 16,
     color: 'black',
   },
   link: {
+    marginBottom: 30,
     textAlign: 'center',
     textDecorationLine: 'underline',
     fontSize: 24,
