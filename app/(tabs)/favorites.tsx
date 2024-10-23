@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 
 import Parse from '@/config/parseConfig';
@@ -17,6 +17,7 @@ export default function Favorites() {
         setLoading(true);
         if (!user) {
           setLoading(false);
+          setFavorites([]);
           return;
         }
 
@@ -79,9 +80,16 @@ export default function Favorites() {
 
   return (
     <View style={styles.container}>
-      {favorites.length === 0 ? (
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      {!user && (
+        <View style={styles.clearFavorites}>
+          <Text style={styles.emptyText}>To get started, log in to your account.</Text>
+      </View>
+      )}
+      {user && favorites.length === 0 && (
         <Text style={styles.emptyText}>Your favorites list is empty.</Text>
-      ) : (
+      )}
+      {user && (      
         favorites.map((news) => (
           <View key={news.url} style={styles.card}>
             <Image source={{ uri: news.urlToImage }} style={styles.image} />
@@ -115,6 +123,7 @@ export default function Favorites() {
           </View>
         ))
       )}
+      </ScrollView>
     </View>
   );
 }
@@ -124,6 +133,11 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#f9f9f9',
     padding: 10,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loading: {
     margin: 50,
@@ -195,4 +209,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     textAlign: 'center',
   },
+  clearFavorites: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
